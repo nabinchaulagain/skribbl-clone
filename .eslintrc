@@ -23,6 +23,7 @@
   "root": true,
   "rules": {
     "camelcase": "error",
-    "no-console": "warn"
+    "no-console": "warn",
+    "react/prop-types": "off"
   }
 }
