@@ -3,7 +3,6 @@ import React from 'react';
 import DrawingBoard from './DrawingBoard';
 import DrawingBoardProvider from '../providers/DrawingBoardProvider';
 import StylePicker from './StylePicker';
-
 const App: React.FC = () => {
   return (
     <DrawingBoardProvider>

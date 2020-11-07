@@ -15,7 +15,7 @@
   "parserOptions": {
     "sourceType": "module",
     "ecmaVersion": 2019,
-    "project": "./server/tsconfig.json"
+    "project": "./tsconfig.json"
   },
   "settings": {
     "node": {
