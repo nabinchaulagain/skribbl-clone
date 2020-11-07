@@ -1,4 +1,6 @@
 import React, { useState } from 'react';
+import socket from '../utils/socket';
+
 interface DrawingBoardProviderProps {
   children: React.ReactNode;
 }
@@ -18,6 +20,13 @@ export interface DrawingBoardContextProps {
   brushSize: number;
   handleBrushSizeChange: (ev: PickerEvent) => void;
 }
+export interface Line {
+  x: number;
+  y: number;
+  color: string;
+  brushSize: number;
+  isEnding: boolean;
+}
 
 export const DrawingBoardContext = React.createContext<
   Partial<DrawingBoardContextProps>
@@ -30,18 +39,40 @@ const DrawingBoardProvider = (
   const [ctx, setCtx] = React.useState<CanvasRenderingContext2D>();
   const [color, setColor] = useState('#ff0000');
   const [brushSize, setBrushSize] = useState(10);
-  const draw = (ev: BoardEvent) => {
+  React.useEffect(() => {
+    if (ctx) {
+      socket.on('lineDraw', (line: Line) => {
+        drawLine(line);
+      });
+    }
+  }, [ctx]);
+
+  const drawLine = (line: Line) => {
+    if (!ctx) {
+      return;
+    }
+    ctx.strokeStyle = line.color;
+    ctx.lineWidth = line.brushSize;
+    ctx.lineTo(line.x, line.y);
+    ctx.stroke();
+    if (line.isEnding) {
+      ctx.beginPath();
+    }
+  };
+
+  const draw = (ev: BoardEvent, isEnding = false) => {
     if (!ctx || !isDrawing) {
       return;
     }
-    ctx.strokeStyle = color;
-    ctx.lineWidth = brushSize;
     const newLine = {
       x: ev.clientX - ctx.canvas.offsetLeft,
       y: ev.clientY - ctx.canvas.offsetTop,
+      color,
+      brushSize,
+      isEnding,
     };
-    ctx.lineTo(newLine.x, newLine.y);
-    ctx.stroke();
+    drawLine(newLine);
+    socket.emit('lineDraw', newLine);
   };
   const handleMouseMove = (ev: BoardEvent): void => {
     draw(ev);
@@ -52,8 +83,7 @@ const DrawingBoardProvider = (
   };
   const handleMouseUp = (ev: BoardEvent): void => {
     setIsDrawing(false);
-    draw(ev);
-    ctx?.beginPath();
+    draw(ev, true);
   };
   const handleColorChange = (ev: PickerEvent): void => {
     setColor(ev.target.value);

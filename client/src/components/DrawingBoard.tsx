@@ -2,7 +2,7 @@ import React, { useLayoutEffect } from 'react';
 import {
   DrawingBoardContext,
   DrawingBoardContextProps,
-} from './DrawingBoardContext';
+} from '../providers/DrawingBoardProvider';
 
 interface DrawingBoardProps {
   width: number;
@@ -19,8 +19,9 @@ const DrawingBoard: React.FC<DrawingBoardProps> = (props) => {
     canvas.height = props.height;
     canvas.width = props.width;
     const ctx = canvas.getContext('2d') as CanvasRenderingContext2D;
-    ctx.lineWidth = 12;
+    ctx.lineWidth = context.brushSize;
     ctx.lineCap = 'round';
+    ctx.lineJoin = 'round';
     context.setCtx(ctx);
   }, []);
   return (

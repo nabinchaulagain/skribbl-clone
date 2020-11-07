@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <h1>The senate sds monday</h1>
+    <script
+      src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/3.0.0/socket.io.js"
+      integrity="sha512-FPJNGVqbetcAGvuJTpWqVuaOim5C5pyV+JaiAOxtBgsOWy0aiOLM9k5Nh7ikpSzUoz2Tb9Ue6zYWICDr9zZ5+g=="
+      crossorigin="anonymous"
+    ></script>
+    <script>
+      const socket = io('http://localhost:5000', {
+        transports: ['websocket'],
+      });
+    </script>
+  </body>
+</html>

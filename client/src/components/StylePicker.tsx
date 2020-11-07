@@ -2,7 +2,7 @@ import React, { useContext } from 'react';
 import {
   DrawingBoardContext,
   DrawingBoardContextProps,
-} from './DrawingBoardContext';
+} from '../providers/DrawingBoardProvider';
 const StylePicker: React.FC = () => {
   const context = useContext(DrawingBoardContext) as DrawingBoardContextProps;
   return (

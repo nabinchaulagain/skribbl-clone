@@ -10,7 +10,6 @@
     "plugin:@typescript-eslint/eslint-recommended",
     "plugin:@typescript-eslint/recommended",
     "plugin:react/recommended",
-    "plugin:jest/all",
     "plugin:testing-library/react",
     "prettier/@typescript-eslint",
     "prettier/react",
@@ -18,7 +17,7 @@
   ],
   "parser": "@typescript-eslint/parser",
   "parserOptions": {
-    "project": "./tsconfig.json"
+    "project": "./client/tsconfig.json"
   },
   "root": true,
   "rules": {
