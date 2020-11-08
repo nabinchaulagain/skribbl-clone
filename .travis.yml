@@ -6,7 +6,7 @@ before_install:
 script:
   - docker run nabinchaulagain/skribbl-client-dev npm run lint
   - docker run nabinchaulagain/skribbl-server-dev npm run lint
-  - docker run -e CI=true nabinchaulagain/skribbl-client npm test
+  - docker run -e CI=true nabinchaulagain/skribbl-client-dev npm test
 after_success:
   - docker build -t nabinchaulagain/skribbl-client client
   - docker build -t nabinchaulagain/skribbl-server server
