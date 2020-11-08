@@ -5,7 +5,7 @@ import reportWebVitals from './reportWebVitals';
 
 ReactDOM.render(
   <React.StrictMode>
-    <App />
+    <App canvasHeight={700} canvasWidth={800} />
   </React.StrictMode>,
   document.getElementById('root')
 );

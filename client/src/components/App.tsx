@@ -3,10 +3,14 @@ import React from 'react';
 import DrawingBoard from './DrawingBoard';
 import DrawingBoardProvider from '../providers/DrawingBoardProvider';
 import StylePicker from './StylePicker';
-const App: React.FC = () => {
+interface AppProps {
+  canvasWidth: number;
+  canvasHeight: number;
+}
+const App: React.FC<AppProps> = ({ canvasWidth, canvasHeight }) => {
   return (
     <DrawingBoardProvider>
-      <DrawingBoard width={800} height={700}></DrawingBoard>
+      <DrawingBoard width={canvasWidth} height={canvasHeight}></DrawingBoard>
       <StylePicker></StylePicker>
     </DrawingBoardProvider>
   );

@@ -82,8 +82,8 @@ const DrawingBoardProvider = (
     draw(ev);
   };
   const handleMouseUp = (ev: BoardEvent): void => {
-    setIsDrawing(false);
     draw(ev, true);
+    setIsDrawing(false);
   };
   const handleColorChange = (ev: PickerEvent): void => {
     setColor(ev.target.value);

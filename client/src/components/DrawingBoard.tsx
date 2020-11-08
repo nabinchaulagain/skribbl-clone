@@ -32,6 +32,7 @@ const DrawingBoard: React.FC<DrawingBoardProps> = (props) => {
       onMouseDown={context.handleMouseDown}
       onMouseUp={context.handleMouseUp}
       onMouseMove={context.handleMouseMove}
+      data-testid="canvas"
     ></canvas>
   );
 };

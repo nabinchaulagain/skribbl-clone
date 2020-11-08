@@ -17,7 +17,7 @@ const StylePicker: React.FC = () => {
       <input
         type="range"
         min={5}
-        max={50}
+        max={30}
         value={context.brushSize}
         onChange={context.handleBrushSizeChange}
       />
