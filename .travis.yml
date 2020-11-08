@@ -1,9 +1,28 @@
 services:
   - docker
 before_install:
-  - docker build -t nabinchaulagain/skribbl-client -f client/Dockerfile.dev client
-  - docker build -t nabinchaulagain/skribbl-server -f server/Dockerfile.dev server
+  - docker build -t nabinchaulagain/skribbl-client-dev -f client/Dockerfile.dev client
+  - docker build -t nabinchaulagain/skribbl-server-dev -f server/Dockerfile.dev server
 script:
-  - docker run nabinchaulagain/skribbl-client npm run lint
-  - docker run nabinchaulagain/skribbl-server npm run lint
+  - docker run nabinchaulagain/skribbl-client-dev npm run lint
+  - docker run nabinchaulagain/skribbl-server-dev npm run lint
   - docker run -e CI=true nabinchaulagain/skribbl-client npm test
+after_success:
+  - docker build -t nabinchaulagain/skribbl-client client
+  - docker build -t nabinchaulagain/skribbl-server server
+  - docker build -t nabinchaulagain/skribbl-nginx nginx
+  - echo "$DOCKER_PASS" | docker login -u "$DOCKER_ID"
+  - docker push nabinchaulagain/skribbl-client
+  - docker push nabinchaulagain/skribbl-server
+  - docker push nabinchaulagain/skribbl-nginx
+deploy:
+  provider: elasticbeanstalk
+  region: us-east-2
+  app: $AWS_APP
+  env: $AWS_APP_ENV
+  bucket_name: $AWS_BUCKET_NAME
+  bucket_path: skribbl
+  on:
+    branch: master
+  access_key_id: $AWS_ACCESS_KEY
+  secret_access_key: $AWS_SECRET_KEY

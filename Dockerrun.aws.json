@@ -1,0 +1,32 @@
+{
+  "ASWEBVersion": "2",
+  "containerDefinitions": [
+    {
+      "name": "client",
+      "image": "nabinchaulagain/skribbl-client",
+      "hostname": "client",
+      "memory": 128,
+      "essential": false
+    },
+    {
+      "name": "nginx",
+      "image": "nabinchaulagain/skribbl-nginx",
+      "essential": true,
+      "portMappings": [
+        {
+          "hostPort": 80,
+          "containerPort": 80
+        }
+      ],
+      "memory": 128,
+      "links": ["client", "server"]
+    },
+    {
+      "name": "server",
+      "image": "nabinchaulagain/skribbl-server",
+      "hostname": "serv",
+      "memory": 128,
+      "essential": false
+    }
+  ]
+}
