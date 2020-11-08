@@ -24,5 +24,10 @@
     "camelcase": "error",
     "no-console": "warn",
     "react/prop-types": "off"
+  },
+  "settings": {
+    "react": {
+      "version": "16"
+    }
   }
 }

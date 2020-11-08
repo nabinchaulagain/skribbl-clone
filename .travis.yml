@@ -1,0 +1,8 @@
+services:
+  - docker
+before_install:
+  - docker build -t nabinchaulagain/skribbl-client -f client/Dockerfile.dev client
+  - docker build -t nabinchaulagain/skribbl-server -f server/Dockerfile.dev server
+script:
+  - docker run nabinchaulagain/skribbl-client npm run lint
+  - docker run nabinchaulagain/skribbl-server npm run lint
