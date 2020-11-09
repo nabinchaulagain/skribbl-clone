@@ -29,6 +29,8 @@
     "no-console": "warn",
     "no-underscore-dangle": "off",
     "class-methods-use-this": "off",
-    "node/no-unsupported-features/es-syntax": "off"
+    "node/no-unsupported-features/es-syntax": "off",
+    "@typescript-eslint/explicit-module-boundary-types": "off",
+    "@typescript-eslint/no-explicit-any": "off"
   }
 }

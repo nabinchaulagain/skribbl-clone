@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import socket from '../utils/socket';
+import { waitFor } from '../utils';
 
 interface DrawingBoardProviderProps {
   children: React.ReactNode;
@@ -43,6 +44,12 @@ const DrawingBoardProvider = (
     if (ctx) {
       socket.on('lineDraw', (line: Line) => {
         drawLine(line);
+      });
+      socket.on('drawingState', async (lines: Line[]) => {
+        for (const line of lines) {
+          drawLine(line);
+          await waitFor(5);
+        }
       });
     }
   }, [ctx]);

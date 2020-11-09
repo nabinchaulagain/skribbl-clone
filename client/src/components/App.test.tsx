@@ -5,6 +5,7 @@ import DrawingBoardProvider, { Line } from '../providers/DrawingBoardProvider';
 import DrawingBoard from './DrawingBoard';
 import createCanvasCtxMock, { CanvasContextMock } from '../__mocks__/canvasCtx';
 import mockServerSocket from '../__mocks__/serverSocket';
+import { waitFor } from '../utils';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 (HTMLCanvasElement as any).prototype.getContext = function (): CanvasContextMock {
@@ -55,9 +56,11 @@ describe('drawing board', (): void => {
   describe('socket', (): void => {
     it('draws when socket recieves a message', (): void => {
       //@ts-expect-error
+      socketMock.listeners = {};
+      //@ts-expect-error
       socketMock.on = jest.fn((msg: string, cb: () => void) => {
         //@ts-expect-error
-        socketMock.listeners = { [msg]: [cb] };
+        socketMock.listeners[msg] = [cb];
       });
       render(
         <DrawingBoardProvider>
@@ -82,6 +85,37 @@ describe('drawing board', (): void => {
       serverSocket.emit('lineDraw', line);
       serverSocket.emit('lineDraw', line);
       expect(ctxMock.stroke).toBeCalledTimes(3);
+    });
+    it('redraws the drawing state', async (): Promise<void> => {
+      //@ts-expect-error
+      socketMock.listeners = {};
+      //@ts-expect-error
+      socketMock.on = jest.fn((msg: string, cb: () => void) => {
+        //@ts-expect-error
+        socketMock.listeners[msg] = [cb];
+      });
+      render(
+        <DrawingBoardProvider>
+          <DrawingBoard
+            width={window.outerWidth}
+            height={window.outerHeight}
+          ></DrawingBoard>
+        </DrawingBoardProvider>
+      );
+      const canvas = screen.getByTestId('canvas') as HTMLCanvasElement;
+      const ctxMock = (canvas.getContext('2d') as unknown) as CanvasContextMock;
+      const serverSocket = mockServerSocket(socketMock);
+
+      const lines: Line[] = new Array(10).fill({
+        brushSize: 20,
+        color: '#ffffff',
+        x: 50,
+        y: 20,
+        isEnding: false,
+      });
+      serverSocket.emit('drawingState', lines);
+      await waitFor(100);
+      expect(ctxMock.stroke).toBeCalledTimes(10);
     });
   });
 });
