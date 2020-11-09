@@ -1,20 +1,24 @@
-version: '3'
+version: "3"
 services:
-  server:
+  serv:
     build:
-      context: './server'
-      dockerfile: 'Dockerfile.dev'
-    ports:
-      - '5000:5000'
+      context: "./server"
+      dockerfile: "Dockerfile.dev"
     volumes:
       - /app/node_modules
       - ./server:/app
   client:
     build:
-      context: './client'
-      dockerfile: 'Dockerfile.dev'
-    ports:
-      - '3000:3000'
+      context: "./client"
+      dockerfile: "Dockerfile.dev"
     volumes:
       - /app/node_modules
       - ./client:/app
+  nginx:
+    build:
+      context: "./nginx"
+      dockerfile: Dockerfile
+    ports:
+      - "80:80"
+    logging:
+      driver: none

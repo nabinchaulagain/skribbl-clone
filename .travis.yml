@@ -11,7 +11,7 @@ after_success:
   - docker build -t nabinchaulagain/skribbl-client client
   - docker build -t nabinchaulagain/skribbl-server server
   - docker build -t nabinchaulagain/skribbl-nginx nginx
-  - echo "$DOCKER_PASS" | docker login -u "$DOCKER_ID"
+  - echo "$DOCKER_PASS" | docker login -u "$DOCKER_ID" --password-stdin
   - docker push nabinchaulagain/skribbl-client
   - docker push nabinchaulagain/skribbl-server
   - docker push nabinchaulagain/skribbl-nginx

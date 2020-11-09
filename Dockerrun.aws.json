@@ -1,5 +1,5 @@
 {
-  "ASWEBVersion": "2",
+  "AWSEBDockerrunVersion": "2",
   "containerDefinitions": [
     {
       "name": "client",
@@ -25,7 +25,7 @@
       "name": "server",
       "image": "nabinchaulagain/skribbl-server",
       "hostname": "serv",
-      "memory": 128,
+      "memory": 256,
       "essential": false
     }
   ]

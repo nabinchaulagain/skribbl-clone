@@ -10,6 +10,7 @@ interface AppProps {
 const App: React.FC<AppProps> = ({ canvasWidth, canvasHeight }) => {
   return (
     <DrawingBoardProvider>
+      <h1>Patents bill gates</h1>
       <DrawingBoard width={canvasWidth} height={canvasHeight}></DrawingBoard>
       <StylePicker></StylePicker>
     </DrawingBoardProvider>
