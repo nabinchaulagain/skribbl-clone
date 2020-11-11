@@ -3,17 +3,10 @@ import socketMock from '../utils/socket';
 import { cleanup, fireEvent, render, screen } from '@testing-library/react';
 import DrawingBoardProvider, { Line } from '../providers/DrawingBoardProvider';
 import DrawingBoard from './DrawingBoard';
-import createCanvasCtxMock, { CanvasContextMock } from '../__mocks__/canvasCtx';
+import { CanvasContextMock } from '../__mocks__/canvasCtx';
 import mockServerSocket from '../__mocks__/serverSocket';
 import { waitFor } from '../utils';
-
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-(HTMLCanvasElement as any).prototype.getContext = function (): CanvasContextMock {
-  if (!this.ctxMock) {
-    this.ctxMock = createCanvasCtxMock(this);
-  }
-  return this.ctxMock;
-};
 
 jest.mock('../utils/socket');
 describe('drawing board', (): void => {
@@ -60,7 +53,12 @@ describe('drawing board', (): void => {
       //@ts-expect-error
       socketMock.on = jest.fn((msg: string, cb: () => void) => {
         //@ts-expect-error
-        socketMock.listeners[msg] = [cb];
+        if (!socketMock.listeners[msg]) {
+          //@ts-expect-error
+          socketMock.listeners[msg] = [];
+        }
+        //@ts-expect-error
+        socketMock.listeners[msg].push(cb);
       });
       render(
         <DrawingBoardProvider drawingPermission={true} isGameStarted={true}>
@@ -103,6 +101,13 @@ describe('drawing board', (): void => {
       serverSocket.emit('drawingState', lines);
       await waitFor(100);
       expect(ctxMock.stroke).toBeCalledTimes(10);
+    });
+    it('clears the canvas when round starts', (): void => {
+      const canvas = screen.getByTestId('canvas') as HTMLCanvasElement;
+      const ctxMock = (canvas.getContext('2d') as unknown) as CanvasContextMock;
+      const serverSocket = mockServerSocket(socketMock);
+      serverSocket.emit('roundStart', 1);
+      expect(ctxMock.clearRect).toBeCalledTimes(1);
     });
   });
 });

@@ -4,8 +4,8 @@ export default (
   return {
     emit: (msg: string, arg: unknown): void => {
       //@ts-expect-error
-      const listener = socket.listeners[msg][0];
-      listener(arg);
+      const listeners: ((arg: unknown) => void)[] = socket.listeners[msg];
+      listeners.forEach((listener) => listener(arg));
     },
   };
 };
