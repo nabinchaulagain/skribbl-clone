@@ -1,17 +1,31 @@
-import cfg from './config';
+import config from './config';
 export type User = { id: string; socket: SocketIO.Socket };
 export default class Room {
   users: User[];
   drawingState: any[];
+  gameStarted: boolean;
+  activeUserIdx: number;
+  gameStartTime: number | null;
+  endRoundTimeOut: NodeJS.Timeout | null;
+
   constructor() {
     this.users = [];
     this.drawingState = [];
+    this.gameStarted = false;
+    this.activeUserIdx = 0;
+    this.gameStartTime = null;
+    this.endRoundTimeOut = null;
   }
+
   isFull(): boolean {
-    return this.users.length === cfg.MAX_PLAYERS_PER_ROOM;
+    return this.users.length === config.MAX_PLAYERS_PER_ROOM;
   }
+  getActiveUser(): User {
+    return this.users[this.activeUserIdx];
+  }
+
   addUser(user: User): void {
-    if (this.users.length > cfg.MAX_PLAYERS_PER_ROOM) {
+    if (this.users.length > config.MAX_PLAYERS_PER_ROOM) {
       throw new Error('too many players');
     }
     this.users.push(user);
@@ -35,5 +49,39 @@ export default class Room {
   }
   clearDrawingState(): void {
     this.drawingState = [];
+  }
+  startGame(): void {
+    this.broadcast('gameStart', 1);
+    this.gameStarted = true;
+  }
+  endGame(): void {
+    this.broadcast('gameEnd', 1);
+  }
+  getRoundInfo() {
+    return {
+      socketId: this.getActiveUser().id,
+      startTime: this.gameStartTime,
+      timeToComplete: config.TIME_TO_COMPLETE,
+    };
+  }
+  startRound(): void {
+    this.gameStartTime = Date.now();
+    this.broadcast('roundStart', this.getRoundInfo());
+    this.endRoundTimeOut = setTimeout(() => {
+      this.endRound();
+      setTimeout(() => this.startNextRound(), config.ROUND_DELAY);
+    }, config.TIME_TO_COMPLETE);
+  }
+  endRound(): void {
+    this.broadcast('roundEnd', 1);
+  }
+  startNextRound(): void {
+    this.activeUserIdx++;
+    this.drawingState = [];
+    if (this.activeUserIdx >= this.users.length) {
+      this.endGame();
+    } else {
+      this.startRound();
+    }
   }
 }

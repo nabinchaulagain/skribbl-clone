@@ -20,7 +20,7 @@ describe('drawing board', (): void => {
   describe('user', () => {
     beforeEach(() => {
       render(
-        <DrawingBoardProvider>
+        <DrawingBoardProvider drawingPermission={true} isGameStarted={true}>
           <DrawingBoard
             width={window.outerWidth}
             height={window.outerHeight}
@@ -54,7 +54,7 @@ describe('drawing board', (): void => {
     });
   });
   describe('socket', (): void => {
-    it('draws when socket recieves a message', (): void => {
+    beforeEach(() => {
       //@ts-expect-error
       socketMock.listeners = {};
       //@ts-expect-error
@@ -63,13 +63,15 @@ describe('drawing board', (): void => {
         socketMock.listeners[msg] = [cb];
       });
       render(
-        <DrawingBoardProvider>
+        <DrawingBoardProvider drawingPermission={true} isGameStarted={true}>
           <DrawingBoard
             width={window.outerWidth}
             height={window.outerHeight}
           ></DrawingBoard>
         </DrawingBoardProvider>
       );
+    });
+    it('draws when socket recieves a message', (): void => {
       const canvas = screen.getByTestId('canvas') as HTMLCanvasElement;
       const ctxMock = (canvas.getContext('2d') as unknown) as CanvasContextMock;
       const serverSocket = mockServerSocket(socketMock);
@@ -87,21 +89,6 @@ describe('drawing board', (): void => {
       expect(ctxMock.stroke).toBeCalledTimes(3);
     });
     it('redraws the drawing state', async (): Promise<void> => {
-      //@ts-expect-error
-      socketMock.listeners = {};
-      //@ts-expect-error
-      socketMock.on = jest.fn((msg: string, cb: () => void) => {
-        //@ts-expect-error
-        socketMock.listeners[msg] = [cb];
-      });
-      render(
-        <DrawingBoardProvider>
-          <DrawingBoard
-            width={window.outerWidth}
-            height={window.outerHeight}
-          ></DrawingBoard>
-        </DrawingBoardProvider>
-      );
       const canvas = screen.getByTestId('canvas') as HTMLCanvasElement;
       const ctxMock = (canvas.getContext('2d') as unknown) as CanvasContextMock;
       const serverSocket = mockServerSocket(socketMock);

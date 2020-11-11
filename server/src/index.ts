@@ -1,5 +1,6 @@
 import express from 'express';
 import Room from './room';
+import config from './config';
 
 const app = express();
 
@@ -11,8 +12,7 @@ const server = app.listen(PORT, (): void => {
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const io: SocketIO.Socket = require('socket.io')(server);
 let rooms: Room[] = [];
-
-io.on('connection', (socket: SocketIO.Socket) => {
+io.on('connection', (socket: SocketIO.Socket): void => {
   if (rooms.length === 0) {
     rooms.push(new Room());
   }
@@ -24,16 +24,35 @@ io.on('connection', (socket: SocketIO.Socket) => {
   const room = rooms[roomIdx];
   const user = { id: socket.id, socket };
   room.addUser(user);
-  socket.emit('drawingState', room.drawingState);
-  socket.on('lineDraw', (msg) => {
-    room.addToDrawingState(msg);
-    room.broadcast('lineDraw', msg, user);
-  });
-  socket.on('disconnect', () => {
-    room.removeUser(user);
-    if (room.users.length === 0) {
-      rooms = rooms.filter((rm) => room !== rm);
+  if (room.gameStarted) {
+    socket.emit('gameStart');
+    socket.emit('roundStart', room.getRoundInfo());
+    socket.emit('drawingState', room.drawingState);
+  }
+  if (room.users.length === config.MIN_PLAYERS_PER_ROOM) {
+    room.startGame();
+    room.startRound();
+  }
+
+  socket.on('lineDraw', (msg): void => {
+    if (room.getActiveUser().id === user.id) {
+      room.addToDrawingState(msg);
+      room.broadcast('lineDraw', msg, user);
     }
-    room.broadcast('userDisconnect', 'somebody left the chat');
+  });
+  socket.on('disconnect', (): void => {
+    const activeUser = room.getActiveUser();
+    room.removeUser(user);
+    if (room.users.length < config.MIN_PLAYERS_PER_ROOM) {
+      room.endGame();
+      rooms = rooms.filter((rm) => room !== rm);
+      return;
+    }
+    if (activeUser.id === user.id) {
+      room.activeUserIdx--;
+      clearTimeout(room.endRoundTimeOut as NodeJS.Timeout);
+      room.endRound();
+      room.startNextRound();
+    }
   });
 });

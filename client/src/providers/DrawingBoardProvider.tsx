@@ -4,6 +4,8 @@ import { waitFor } from '../utils';
 
 interface DrawingBoardProviderProps {
   children: React.ReactNode;
+  drawingPermission: boolean;
+  isGameStarted: boolean;
 }
 type BoardEvent = React.MouseEvent<HTMLCanvasElement, MouseEvent>;
 type PickerEvent = React.ChangeEvent<HTMLInputElement>;
@@ -36,6 +38,9 @@ export const DrawingBoardContext = React.createContext<
 const DrawingBoardProvider = (
   props: DrawingBoardProviderProps
 ): JSX.Element => {
+  if (!props.isGameStarted) {
+    return <>waiting for others to join...</>;
+  }
   const [isDrawing, setIsDrawing] = React.useState(false);
   const [ctx, setCtx] = React.useState<CanvasRenderingContext2D>();
   const [color, setColor] = useState('#ff0000');
@@ -50,6 +55,9 @@ const DrawingBoardProvider = (
           drawLine(line);
           await waitFor(5);
         }
+      });
+      socket.on('roundStart', () => {
+        ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
       });
     }
   }, [ctx]);
@@ -68,7 +76,7 @@ const DrawingBoardProvider = (
   };
 
   const draw = (ev: BoardEvent, isEnding = false) => {
-    if (!ctx || !isDrawing) {
+    if (!ctx || !isDrawing || !props.drawingPermission) {
       return;
     }
     const newLine = {

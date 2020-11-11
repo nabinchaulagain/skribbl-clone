@@ -1,3 +1,6 @@
 export default {
   MAX_PLAYERS_PER_ROOM: 3,
+  MIN_PLAYERS_PER_ROOM: 2,
+  TIME_TO_COMPLETE: 10 * 1000,
+  ROUND_DELAY: 1 * 1000,
 };
