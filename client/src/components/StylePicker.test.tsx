@@ -5,6 +5,8 @@ import DrawingBoardProvider from '../providers/DrawingBoardProvider';
 import { CanvasContextMock } from '../__mocks__/canvasCtx';
 import StylePicker from './StylePicker';
 
+jest.mock('../utils/socket');
+
 describe('style picker', () => {
   beforeEach(() => {
     render(

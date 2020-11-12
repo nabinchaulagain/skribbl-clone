@@ -6,7 +6,7 @@ import {
 const StylePicker: React.FC = () => {
   const context = useContext(DrawingBoardContext) as DrawingBoardContextProps;
   return (
-    <form>
+    <form id="stylepicker-container">
       <label htmlFor="color-picker">Color</label>
       <input
         id="color-picker"

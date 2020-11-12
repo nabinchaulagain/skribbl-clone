@@ -1,5 +1,6 @@
 import config from './config';
 export type User = { id: string; socket: SocketIO.Socket };
+export type ChatMsg = { msg: string; type: string };
 export default class Room {
   users: User[];
   drawingState: any[];
@@ -83,5 +84,8 @@ export default class Room {
     } else {
       this.startRound();
     }
+  }
+  broadcastChatMsg(msg: ChatMsg) {
+    this.broadcast('chatMsg', msg);
   }
 }

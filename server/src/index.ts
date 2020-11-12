@@ -40,6 +40,9 @@ io.on('connection', (socket: SocketIO.Socket): void => {
       room.broadcast('lineDraw', msg, user);
     }
   });
+  socket.on('chatMsg', (msg): void => {
+    room.broadcastChatMsg(msg);
+  });
   socket.on('disconnect', (): void => {
     const activeUser = room.getActiveUser();
     room.removeUser(user);

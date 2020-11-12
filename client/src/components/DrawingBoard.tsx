@@ -27,8 +27,6 @@ const DrawingBoard: React.FC<DrawingBoardProps> = (props) => {
   return (
     <canvas
       ref={ref}
-      width={props.width}
-      height={props.height}
       onMouseDown={context.handleMouseDown}
       onMouseUp={context.handleMouseUp}
       onMouseMove={context.handleMouseMove}

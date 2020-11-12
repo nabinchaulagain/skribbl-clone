@@ -5,6 +5,7 @@ import DrawingBoardProvider from '../providers/DrawingBoardProvider';
 import StylePicker from './StylePicker';
 import socket from '../utils/socket';
 import Timer, { RoundTime } from './Timer';
+import Chatbox from './Chatbox';
 
 interface AppProps {
   canvasWidth: number;
@@ -45,8 +46,10 @@ const App: React.FC<AppProps> = ({ canvasWidth, canvasHeight }) => {
   }, []);
   return (
     <>
-      {drawingPermission && 'Your Turn to draw!!'}
-      {isRoundStarted && roundTime && <Timer roundTime={roundTime}></Timer>}
+      <div>
+        {drawingPermission && 'Your Turn to draw!!'}
+        {isRoundStarted && roundTime && <Timer roundTime={roundTime}></Timer>}
+      </div>
       <DrawingBoardProvider
         drawingPermission={drawingPermission}
         isGameStarted={isGameStarted}
@@ -54,6 +57,7 @@ const App: React.FC<AppProps> = ({ canvasWidth, canvasHeight }) => {
         <DrawingBoard width={canvasWidth} height={canvasHeight}></DrawingBoard>
         {drawingPermission && <StylePicker></StylePicker>}
       </DrawingBoardProvider>
+      {isGameStarted && <Chatbox></Chatbox>}
     </>
   );
 };
