@@ -21,6 +21,6 @@ const Timer: React.FC<TimerProps> = ({ roundTime }) => {
       isSubscribed = false;
     };
   }, [time]);
-  return <>{Math.round(time / 1000)} seconds to go</>;
+  return <div id="timer">{Math.round(time / 1000)} seconds to go</div>;
 };
 export default Timer;

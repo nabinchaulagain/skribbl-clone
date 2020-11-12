@@ -1,0 +1,81 @@
+body {
+  background: #6e54ff;
+}
+canvas {
+  display: block;
+  margin: auto;
+  margin-top: 50px;
+  border: 5px solid #b1bffa;
+  border-radius: 10px;
+  background: #ffffff;
+  grid-column: 2;
+}
+
+#game-container {
+  display: grid;
+  grid-template-columns: auto 800px 400px;
+  grid-template-rows: auto auto;
+  row-gap: 10px;
+  column-gap: 75px;
+}
+
+#timer {
+  background: #e6e7eb;
+  padding: 10px;
+  border-radius: 20px;
+  width: 20%;
+  margin: auto;
+  text-align: center;
+  font-size: 150%;
+}
+#chatbox-container {
+  position: block;
+  margin-top: 50px;
+  width: 350px;
+  height: 700px;
+  border-radius: 5px;
+  background: #e6e7eb;
+  grid-column: 3;
+  /* grid-row */
+}
+
+#chatbox-messages {
+  height: 92%;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+#chatbox-messages > div {
+  font-size: 110%;
+  height: auto;
+  word-wrap: break-word;
+  padding: 5px 10px;
+}
+#chatbox-messages > div:nth-of-type(even) {
+  background: #ffffff;
+}
+#chatbox-form input {
+  display: block;
+  margin: auto;
+  width: 90%;
+  height: 32px;
+  font-size: 120%;
+}
+#stylepicker-container {
+  margin: auto;
+  background: #e6e7eb;
+  width: 100%;
+  margin-top: 32px;
+  padding: 10px;
+  text-align: center;
+  border-radius: 50px;
+  grid-row: 2;
+  grid-column: 2;
+}
+#stylepicker-container label {
+  margin-right: 3px;
+  font-size: 110%;
+}
+#stylepicker-container input {
+  vertical-align: middle;
+  margin-right: 32px;
+}

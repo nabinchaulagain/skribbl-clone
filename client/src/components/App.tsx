@@ -1,4 +1,4 @@
-import '../styles/index.scss';
+import '../styles/index.css';
 import React, { useEffect } from 'react';
 import DrawingBoard from './DrawingBoard';
 import DrawingBoardProvider from '../providers/DrawingBoardProvider';
@@ -50,14 +50,19 @@ const App: React.FC<AppProps> = ({ canvasWidth, canvasHeight }) => {
         {drawingPermission && 'Your Turn to draw!!'}
         {isRoundStarted && roundTime && <Timer roundTime={roundTime}></Timer>}
       </div>
-      <DrawingBoardProvider
-        drawingPermission={drawingPermission}
-        isGameStarted={isGameStarted}
-      >
-        <DrawingBoard width={canvasWidth} height={canvasHeight}></DrawingBoard>
-        {drawingPermission && <StylePicker></StylePicker>}
-      </DrawingBoardProvider>
-      {isGameStarted && <Chatbox></Chatbox>}
+      <div id="game-container">
+        <DrawingBoardProvider
+          drawingPermission={drawingPermission}
+          isGameStarted={isGameStarted}
+        >
+          <DrawingBoard
+            width={canvasWidth}
+            height={canvasHeight}
+          ></DrawingBoard>
+          {drawingPermission && <StylePicker></StylePicker>}
+        </DrawingBoardProvider>
+        {isGameStarted && <Chatbox></Chatbox>}
+      </div>
     </>
   );
 };
