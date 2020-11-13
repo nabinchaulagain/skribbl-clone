@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import socket from '../utils/socket';
+import Socket from '../utils/Socket';
 import { waitFor } from '../utils';
 
 interface DrawingBoardProviderProps {
@@ -45,6 +45,7 @@ const DrawingBoardProvider = (
   const [ctx, setCtx] = React.useState<CanvasRenderingContext2D>();
   const [color, setColor] = useState('#ff0000');
   const [brushSize, setBrushSize] = useState(10);
+  const socket = Socket.getSocket();
   React.useEffect(() => {
     if (ctx) {
       socket.on('lineDraw', (line: Line) => {

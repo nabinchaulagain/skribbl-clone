@@ -1,5 +1,6 @@
 import express from 'express';
-import Room from './room';
+import Room from './Room';
+import User from './User';
 import config from './config';
 
 const app = express();
@@ -22,7 +23,7 @@ io.on('connection', (socket: SocketIO.Socket): void => {
     roomIdx = rooms.length - 1;
   }
   const room = rooms[roomIdx];
-  const user = { id: socket.id, socket };
+  const user = new User(socket.id, socket, socket.handshake.query.username);
   room.addUser(user);
   if (room.gameStarted) {
     socket.emit('gameStart');
@@ -33,7 +34,6 @@ io.on('connection', (socket: SocketIO.Socket): void => {
     room.startGame();
     room.startRound();
   }
-
   socket.on('lineDraw', (msg): void => {
     if (room.getActiveUser().id === user.id) {
       room.addToDrawingState(msg);

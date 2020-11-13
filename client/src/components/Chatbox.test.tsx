@@ -1,28 +1,21 @@
 import React from 'react';
 import { fireEvent, render, screen, cleanup } from '@testing-library/react';
-import socketMock from '../utils/socket';
+import Socket from '../utils/Socket';
 import Chatbox from './Chatbox';
-import mockServerSocket from '../__mocks__/serverSocket';
+import mockServerSocket from '../mocks/serverSocket';
 import { act } from 'react-dom/test-utils';
-
-jest.mock('../utils/socket');
+import mockSocket from '../mocks/Socket';
 
 describe('chatbox', (): void => {
-  beforeEach((): void => {
+  beforeEach(() => {
+    const socketMock = mockSocket();
     //@ts-expect-error
-    socketMock.listeners = {};
-    //@ts-expect-error
-    socketMock.on = jest.fn((msg: string, cb: () => void) => {
-      //@ts-expect-error
-      if (!socketMock.listeners[msg]) {
-        //@ts-expect-error
-        socketMock.listeners[msg] = [];
-      }
-      //@ts-expect-error
-      socketMock.listeners[msg].push(cb);
-    });
+    Socket.getSocket = () => {
+      return socketMock;
+    };
   });
   it('shows chat message', (): void => {
+    const socketMock = Socket.getSocket();
     const serverSocket = mockServerSocket(socketMock);
     render(<Chatbox></Chatbox>);
     act((): void => {
@@ -42,6 +35,7 @@ describe('chatbox', (): void => {
     const form = input.parentNode;
     fireEvent.change(input, { target: { value: 'pentagon' } });
     fireEvent.submit(form as HTMLElement);
+    const socketMock = Socket.getSocket();
     expect(socketMock.emit).toBeCalledTimes(1);
     expect(socketMock.emit).toBeCalledWith('chatMsg', {
       type: 'chat',

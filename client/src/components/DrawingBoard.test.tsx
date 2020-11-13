@@ -1,15 +1,21 @@
 import React from 'react';
-import socketMock from '../utils/socket';
+import Socket from '../utils/Socket';
 import { cleanup, fireEvent, render, screen } from '@testing-library/react';
 import DrawingBoardProvider, { Line } from '../providers/DrawingBoardProvider';
 import DrawingBoard from './DrawingBoard';
-import { CanvasContextMock } from '../__mocks__/canvasCtx';
-import mockServerSocket from '../__mocks__/serverSocket';
+import { CanvasContextMock } from '../mocks/canvasCtx';
+import mockServerSocket from '../mocks/serverSocket';
 import { waitFor } from '../utils';
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
+import mockSocket from '../mocks/Socket';
 
-jest.mock('../utils/socket');
 describe('drawing board', (): void => {
+  beforeEach(() => {
+    const socketMock = mockSocket();
+    //@ts-expect-error
+    Socket.getSocket = () => {
+      return socketMock;
+    };
+  });
   describe('user', () => {
     beforeEach(() => {
       render(
@@ -48,18 +54,6 @@ describe('drawing board', (): void => {
   });
   describe('socket', (): void => {
     beforeEach(() => {
-      //@ts-expect-error
-      socketMock.listeners = {};
-      //@ts-expect-error
-      socketMock.on = jest.fn((msg: string, cb: () => void) => {
-        //@ts-expect-error
-        if (!socketMock.listeners[msg]) {
-          //@ts-expect-error
-          socketMock.listeners[msg] = [];
-        }
-        //@ts-expect-error
-        socketMock.listeners[msg].push(cb);
-      });
       render(
         <DrawingBoardProvider drawingPermission={true} isGameStarted={true}>
           <DrawingBoard
@@ -72,7 +66,7 @@ describe('drawing board', (): void => {
     it('draws when socket recieves a message', (): void => {
       const canvas = screen.getByTestId('canvas') as HTMLCanvasElement;
       const ctxMock = (canvas.getContext('2d') as unknown) as CanvasContextMock;
-      const serverSocket = mockServerSocket(socketMock);
+      const serverSocket = mockServerSocket(Socket.getSocket());
 
       const line: Line = {
         brushSize: 10,
@@ -89,8 +83,7 @@ describe('drawing board', (): void => {
     it('redraws the drawing state', async (): Promise<void> => {
       const canvas = screen.getByTestId('canvas') as HTMLCanvasElement;
       const ctxMock = (canvas.getContext('2d') as unknown) as CanvasContextMock;
-      const serverSocket = mockServerSocket(socketMock);
-
+      const serverSocket = mockServerSocket(Socket.getSocket());
       const lines: Line[] = new Array(10).fill({
         brushSize: 20,
         color: '#ffffff',
@@ -105,7 +98,7 @@ describe('drawing board', (): void => {
     it('clears the canvas when round starts', (): void => {
       const canvas = screen.getByTestId('canvas') as HTMLCanvasElement;
       const ctxMock = (canvas.getContext('2d') as unknown) as CanvasContextMock;
-      const serverSocket = mockServerSocket(socketMock);
+      const serverSocket = mockServerSocket(Socket.getSocket());
       serverSocket.emit('roundStart', 1);
       expect(ctxMock.clearRect).toBeCalledTimes(1);
     });

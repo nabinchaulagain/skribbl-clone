@@ -1,5 +1,5 @@
 import config from './config';
-export type User = { id: string; socket: SocketIO.Socket };
+import User from './User';
 export type ChatMsg = { msg: string; type: string };
 export default class Room {
   users: User[];

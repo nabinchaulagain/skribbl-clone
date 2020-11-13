@@ -1,7 +1,8 @@
 import React from 'react';
-import socket from '../utils/socket';
+import Socket from '../utils/Socket';
 const ChatForm: React.FC = () => {
   const [chatInput, setChatInput] = React.useState('');
+  const socket = Socket.getSocket();
   return (
     <form
       id="chatbox-form"

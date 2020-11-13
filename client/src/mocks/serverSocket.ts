@@ -1,10 +1,11 @@
+import { SocketMock } from './Socket';
+
 export default (
-  socket: SocketIOClient.Socket
+  socket: SocketMock | SocketIOClient.Socket
 ): { emit: (msg: string, arg: unknown) => void } => {
   return {
     emit: (msg: string, arg: unknown): void => {
-      //@ts-expect-error
-      const listeners: ((arg: unknown) => void)[] = socket.listeners[msg];
+      const listeners = socket.listeners(msg);
       listeners.forEach((listener) => listener(arg));
     },
   };

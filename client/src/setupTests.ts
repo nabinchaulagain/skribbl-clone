@@ -3,7 +3,7 @@
 // expect(element).toHaveTextContent(/react/i)
 // learn more: https://github.com/testing-library/jest-dom
 import '@testing-library/jest-dom';
-import createCanvasCtxMock, { CanvasContextMock } from './__mocks__/canvasCtx';
+import createCanvasCtxMock, { CanvasContextMock } from './mocks/canvasCtx';
 
 (HTMLCanvasElement as any).prototype.getContext = function (): CanvasContextMock {
   if (!this.ctxMock) {

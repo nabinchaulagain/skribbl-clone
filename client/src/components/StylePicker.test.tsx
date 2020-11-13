@@ -2,10 +2,16 @@ import React from 'react';
 import { screen, render, cleanup, fireEvent } from '@testing-library/react';
 import DrawingBoard from './DrawingBoard';
 import DrawingBoardProvider from '../providers/DrawingBoardProvider';
-import { CanvasContextMock } from '../__mocks__/canvasCtx';
+import { CanvasContextMock } from '../mocks/canvasCtx';
 import StylePicker from './StylePicker';
+import Socket from '../utils/Socket';
+import mockSocket from '../mocks/Socket';
 
-jest.mock('../utils/socket');
+const socketMock = mockSocket();
+//@ts-expect-error
+Socket.getSocket = () => {
+  return socketMock;
+};
 
 describe('style picker', () => {
   beforeEach(() => {

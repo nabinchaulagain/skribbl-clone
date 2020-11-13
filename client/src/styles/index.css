@@ -1,6 +1,41 @@
 body {
   background: #6e54ff;
 }
+
+#home-container {
+  margin: auto;
+  width: 30%;
+  background: #e6ebff;
+  margin-top: 32px;
+  padding: 20px 5px;
+  border-radius: 5px;
+}
+#home-container input[type='text'] {
+  display: block;
+  margin: auto;
+  width: 50%;
+  padding: 10px 5px;
+  font-size: 110%;
+}
+
+.btn {
+  padding: 7px 15px;
+  border: none;
+  border-radius: 5px;
+}
+.btn:hover {
+  cursor: pointer;
+}
+.btn-style-1 {
+  background: linear-gradient(#032991, #590391);
+  color: white;
+}
+#home-container input[type='submit'] {
+  display: block;
+  margin: auto;
+  margin-top: 16px;
+  font-size: 120%;
+}
 canvas {
   display: block;
   margin: auto;
@@ -36,7 +71,6 @@ canvas {
   border-radius: 5px;
   background: #e6e7eb;
   grid-column: 3;
-  /* grid-row */
 }
 
 #chatbox-messages {

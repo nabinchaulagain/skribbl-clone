@@ -1,9 +1,10 @@
 import React from 'react';
-import socket from '../utils/socket';
+import Socket from '../utils/Socket';
 import ChatForm from './ChatForm';
 import ChatMessages, { ChatMsg } from './ChatMessages';
 const Chatbox: React.FC = () => {
   const [messages, setMessages] = React.useState<ChatMsg[]>([]);
+  const socket = Socket.getSocket();
   React.useEffect(() => {
     socket.on('chatMsg', (msg: ChatMsg) => {
       setMessages([...messages, msg]);
