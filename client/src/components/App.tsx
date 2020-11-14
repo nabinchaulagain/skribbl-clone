@@ -7,7 +7,14 @@ const App: React.FC = () => {
   if (username === null) {
     return <Home setUsername={setUsername}></Home>;
   }
-  return <Game canvasHeight={700} canvasWidth={800} username={username}></Game>;
+  return (
+    <Game
+      canvasHeight={700}
+      canvasWidth={800}
+      username={username}
+      exitGame={() => setUsername(null)}
+    ></Game>
+  );
 };
 
 export default App;

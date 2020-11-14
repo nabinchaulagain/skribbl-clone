@@ -69,7 +69,7 @@ canvas {
   width: 350px;
   height: 700px;
   border-radius: 5px;
-  background: #e6e7eb;
+  background: #edeef2;
   grid-column: 3;
 }
 
@@ -112,4 +112,44 @@ canvas {
 #stylepicker-container input {
   vertical-align: middle;
   margin-right: 32px;
+}
+.msg-chat {
+  color: black;
+}
+.msg-good,
+.msg-bad,
+.msg-alert {
+  font-weight: bolder;
+}
+.msg-good {
+  color: #209e6e;
+}
+.msg-bad {
+  color: #e30022;
+}
+.msg-alert {
+  color: #6098f7;
+}
+
+#scoreboard {
+  margin: auto;
+  height: auto;
+  width: 80%;
+  margin-top: 50px;
+  grid-column: 1;
+  border: 1px solid black;
+  background: #edeef2;
+  border-radius: 10px;
+  font-size: 120%;
+}
+#scoreboard > div {
+  padding: 10px;
+  text-align: center;
+}
+#scoreboard > h2 {
+  text-align: center;
+  margin: 10px;
+}
+#scoreboard > div:nth-of-type(odd) {
+  background: #ffffff;
 }

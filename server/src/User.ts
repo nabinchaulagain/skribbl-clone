@@ -9,6 +9,9 @@ class User {
     this.points = 0;
     this.username = username;
   }
+  describe() {
+    return { id: this.id, username: this.username, points: this.points };
+  }
 }
 
 export default User;

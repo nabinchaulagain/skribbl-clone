@@ -25,6 +25,7 @@ io.on('connection', (socket: SocketIO.Socket): void => {
   const room = rooms[roomIdx];
   const user = new User(socket.id, socket, socket.handshake.query.username);
   room.addUser(user);
+  socket.emit('usersState', room.getUsersState());
   if (room.gameStarted) {
     socket.emit('gameStart');
     socket.emit('roundStart', room.getRoundInfo());
@@ -41,7 +42,7 @@ io.on('connection', (socket: SocketIO.Socket): void => {
     }
   });
   socket.on('chatMsg', (msg): void => {
-    room.broadcastChatMsg(msg);
+    room.broadcastChatMsg({ ...msg, username: user.username });
   });
   socket.on('disconnect', (): void => {
     const activeUser = room.getActiveUser();
@@ -51,7 +52,7 @@ io.on('connection', (socket: SocketIO.Socket): void => {
       rooms = rooms.filter((rm) => room !== rm);
       return;
     }
-    if (activeUser.id === user.id) {
+    if (activeUser && activeUser.id === user.id) {
       room.activeUserIdx--;
       clearTimeout(room.endRoundTimeOut as NodeJS.Timeout);
       room.endRound();

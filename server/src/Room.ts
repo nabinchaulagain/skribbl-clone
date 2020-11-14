@@ -30,9 +30,19 @@ export default class Room {
       throw new Error('too many players');
     }
     this.users.push(user);
+    this.broadcast('userJoin', user.describe());
+    this.broadcastChatMsg({
+      type: 'good',
+      msg: `${user.username} has joined the game`,
+    });
   }
   removeUser(user: User): void {
     this.users = this.users.filter((usr) => usr.id !== user.id);
+    this.broadcastChatMsg({
+      type: 'bad',
+      msg: `${user.username} has left the game`,
+    });
+    this.broadcast('userLeave', user.describe());
   }
   broadcast(
     msg: string,
@@ -68,6 +78,10 @@ export default class Room {
   startRound(): void {
     this.gameStartTime = Date.now();
     this.broadcast('roundStart', this.getRoundInfo());
+    this.broadcastChatMsg({
+      msg: `It is ${this.getActiveUser().username}'s turn to draw`,
+      type: 'alert',
+    });
     this.endRoundTimeOut = setTimeout(() => {
       this.endRound();
       setTimeout(() => this.startNextRound(), config.ROUND_DELAY);
@@ -87,5 +101,8 @@ export default class Room {
   }
   broadcastChatMsg(msg: ChatMsg) {
     this.broadcast('chatMsg', msg);
+  }
+  getUsersState() {
+    return this.users.map((user: User) => user.describe());
   }
 }

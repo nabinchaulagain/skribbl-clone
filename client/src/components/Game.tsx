@@ -6,13 +6,23 @@ import StylePicker from './StylePicker';
 import Socket from '../utils/Socket';
 import Timer, { RoundTime } from './Timer';
 import Chatbox from './Chatbox';
+import Scoreboard from './Scoreboard';
 
 interface GameProps {
   canvasWidth: number;
   canvasHeight: number;
   username: string;
+  exitGame: () => void;
 }
-const Game: React.FC<GameProps> = ({ canvasWidth, canvasHeight }) => {
+
+export type User = {
+  id: string;
+  points: number;
+  username: string;
+};
+
+const Game: React.FC<GameProps> = ({ canvasWidth, canvasHeight, exitGame }) => {
+  const [users, setUsers] = React.useState<User[]>([]);
   const [drawingPermission, setDrawingPermission] = React.useState(false);
   const [isGameStarted, setIsGameStarted] = React.useState(false);
   const [isRoundStarted, setIsRoundStarted] = React.useState(false);
@@ -26,6 +36,7 @@ const Game: React.FC<GameProps> = ({ canvasWidth, canvasHeight }) => {
   const endGame = (): void => {
     endRound();
     socket.disconnect();
+    exitGame();
   };
   useEffect(() => {
     socket.on('gameStart', (): void => {
@@ -45,7 +56,22 @@ const Game: React.FC<GameProps> = ({ canvasWidth, canvasHeight }) => {
     });
     socket.on('roundEnd', endRound);
     socket.on('gameEnd', endGame);
+    socket.on('usersState', (users: User[]) => {
+      setUsers(users);
+    });
   }, []);
+  useEffect(() => {
+    socket.on('userJoin', (user: User) => {
+      setUsers([...users, user]);
+    });
+    socket.on('userLeave', (user: User) => {
+      setUsers(users.filter((usr) => usr.id !== user.id));
+    });
+    return () => {
+      socket.removeEventListener('userJoin');
+      socket.removeEventListener('userLeave');
+    };
+  }, [users]);
   return (
     <>
       <div>
@@ -57,13 +83,14 @@ const Game: React.FC<GameProps> = ({ canvasWidth, canvasHeight }) => {
           drawingPermission={drawingPermission}
           isGameStarted={isGameStarted}
         >
+          <Scoreboard users={users}></Scoreboard>
           <DrawingBoard
             width={canvasWidth}
             height={canvasHeight}
           ></DrawingBoard>
           {drawingPermission && <StylePicker></StylePicker>}
         </DrawingBoardProvider>
-        {isGameStarted && <Chatbox></Chatbox>}
+        <Chatbox></Chatbox>
       </div>
     </>
   );

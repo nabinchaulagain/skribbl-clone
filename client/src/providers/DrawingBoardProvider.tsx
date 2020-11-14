@@ -38,9 +38,6 @@ export const DrawingBoardContext = React.createContext<
 const DrawingBoardProvider = (
   props: DrawingBoardProviderProps
 ): JSX.Element => {
-  if (!props.isGameStarted) {
-    return <>waiting for others to join...</>;
-  }
   const [isDrawing, setIsDrawing] = React.useState(false);
   const [ctx, setCtx] = React.useState<CanvasRenderingContext2D>();
   const [color, setColor] = useState('#ff0000');
