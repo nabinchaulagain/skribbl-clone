@@ -4,7 +4,7 @@ import DrawingBoard from './DrawingBoard';
 import DrawingBoardProvider from '../providers/DrawingBoardProvider';
 import StylePicker from './StylePicker';
 import Socket from '../utils/Socket';
-import Timer, { RoundTime } from './Timer';
+import RoundInfo, { RoundTime } from './RoundInfo';
 import Chatbox from './Chatbox';
 import Scoreboard from './Scoreboard';
 
@@ -25,11 +25,10 @@ const Game: React.FC<GameProps> = ({ canvasWidth, canvasHeight, exitGame }) => {
   const [users, setUsers] = React.useState<User[]>([]);
   const [drawingPermission, setDrawingPermission] = React.useState(false);
   const [isGameStarted, setIsGameStarted] = React.useState(false);
-  const [isRoundStarted, setIsRoundStarted] = React.useState(false);
   const [roundTime, setRoundTime] = React.useState<null | RoundTime>(null);
+  const [word, setWord] = React.useState<null | string>(null);
   const socket = Socket.getSocket();
   const endRound = (): void => {
-    setIsRoundStarted(false);
     setDrawingPermission(false);
     setRoundTime(null);
   };
@@ -52,7 +51,7 @@ const Game: React.FC<GameProps> = ({ canvasWidth, canvasHeight, exitGame }) => {
         timeToComplete: msg.timeToComplete,
         startTime: msg.startTime,
       });
-      setIsRoundStarted(true);
+      setWord(msg.word);
     });
     socket.on('roundEnd', endRound);
     socket.on('gameEnd', endGame);
@@ -74,10 +73,7 @@ const Game: React.FC<GameProps> = ({ canvasWidth, canvasHeight, exitGame }) => {
   }, [users]);
   return (
     <>
-      <div>
-        {drawingPermission && 'Your Turn to draw!!'}
-        {isRoundStarted && roundTime && <Timer roundTime={roundTime}></Timer>}
-      </div>
+      <RoundInfo roundTime={roundTime} word={word}></RoundInfo>
       <div id="game-container">
         <DrawingBoardProvider
           drawingPermission={drawingPermission}

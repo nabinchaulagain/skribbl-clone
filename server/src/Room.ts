@@ -1,12 +1,13 @@
 import config from './config';
+import Round from './Round';
 import User from './User';
-export type ChatMsg = { msg: string; type: string };
+export type ChatMsg = { msg: string; type: string; username?: string };
 export default class Room {
   users: User[];
   drawingState: any[];
   gameStarted: boolean;
   activeUserIdx: number;
-  gameStartTime: number | null;
+  round: Round | null;
   endRoundTimeOut: NodeJS.Timeout | null;
 
   constructor() {
@@ -14,7 +15,7 @@ export default class Room {
     this.drawingState = [];
     this.gameStarted = false;
     this.activeUserIdx = 0;
-    this.gameStartTime = null;
+    this.round = null;
     this.endRoundTimeOut = null;
   }
 
@@ -35,6 +36,13 @@ export default class Room {
       type: 'good',
       msg: `${user.username} has joined the game`,
     });
+    if (this.round) {
+      this.round.userGuesses.push({
+        guessedCorrectly: false,
+        points: 0,
+        userId: user.id,
+      });
+    }
   }
   removeUser(user: User): void {
     this.users = this.users.filter((usr) => usr.id !== user.id);
@@ -69,15 +77,24 @@ export default class Room {
     this.broadcast('gameEnd', 1);
   }
   getRoundInfo() {
+    if (!this.round) {
+      throw new Error();
+    }
     return {
       socketId: this.getActiveUser().id,
-      startTime: this.gameStartTime,
-      timeToComplete: config.TIME_TO_COMPLETE,
+      startTime: this.round.startTime,
+      timeToComplete: this.round.timeToComplete,
+      word: this.round.word,
     };
   }
   startRound(): void {
-    this.gameStartTime = Date.now();
-    this.broadcast('roundStart', this.getRoundInfo());
+    this.round = new Round(this.users);
+    const roundInfo = this.getRoundInfo();
+    this.broadcast('roundStart', {
+      ...roundInfo,
+      word: roundInfo.word.replace(/./gs, '_'),
+    });
+    this.getActiveUser().socket.emit('roundStart', roundInfo);
     this.broadcastChatMsg({
       msg: `It is ${this.getActiveUser().username}'s turn to draw`,
       type: 'alert',
@@ -85,10 +102,12 @@ export default class Room {
     this.endRoundTimeOut = setTimeout(() => {
       this.endRound();
       setTimeout(() => this.startNextRound(), config.ROUND_DELAY);
-    }, config.TIME_TO_COMPLETE);
+    }, this.round.timeToComplete);
   }
+
   endRound(): void {
     this.broadcast('roundEnd', 1);
+    (this.round as Round).isActive = false;
   }
   startNextRound(): void {
     this.activeUserIdx++;
@@ -101,6 +120,13 @@ export default class Room {
   }
   broadcastChatMsg(msg: ChatMsg) {
     this.broadcast('chatMsg', msg);
+  }
+  broadcastChatMsgToCorrectGuessers(msg: ChatMsg) {
+    const correctGuessers = this.users.filter((user) =>
+      this.round?.didUserGuess(user.id)
+    );
+    correctGuessers.push(this.getActiveUser());
+    correctGuessers.forEach((user) => user.socket.emit('chatMsg', msg));
   }
   getUsersState() {
     return this.users.map((user: User) => user.describe());

@@ -27,8 +27,12 @@ io.on('connection', (socket: SocketIO.Socket): void => {
   room.addUser(user);
   socket.emit('usersState', room.getUsersState());
   if (room.gameStarted) {
+    const roundInfo = room.getRoundInfo();
     socket.emit('gameStart');
-    socket.emit('roundStart', room.getRoundInfo());
+    socket.emit('roundStart', {
+      ...roundInfo,
+      word: roundInfo.word.replace(/./gs, '_'),
+    });
     socket.emit('drawingState', room.drawingState);
   }
   if (room.users.length === config.MIN_PLAYERS_PER_ROOM) {
@@ -42,7 +46,46 @@ io.on('connection', (socket: SocketIO.Socket): void => {
     }
   });
   socket.on('chatMsg', (msg): void => {
-    room.broadcastChatMsg({ ...msg, username: user.username });
+    const round = room.round;
+    if (round && round.isActive) {
+      if (user.id === room.getActiveUser().id) {
+        room.broadcastChatMsgToCorrectGuessers({
+          msg: msg.msg,
+          type: 'good',
+          username: user.username,
+        });
+        return;
+      }
+      if (round.didUserGuess(user.id)) {
+        room.broadcastChatMsgToCorrectGuessers({
+          msg: msg.msg,
+          type: 'good',
+          username: user.username,
+        });
+      } else {
+        if (round.word === msg.msg) {
+          user.socket.emit('chatMsg', {
+            msg: msg.msg,
+            type: 'good',
+            username: user.username,
+          });
+          room.broadcastChatMsgToCorrectGuessers({
+            msg: msg.msg,
+            type: 'good',
+            username: user.username,
+          });
+          room.broadcastChatMsg({
+            type: 'good',
+            msg: `${user.username} guessed the word correctly`,
+          });
+          round.assignUserPoints(user.id);
+        } else {
+          room.broadcastChatMsg({ ...msg, username: user.username });
+        }
+      }
+    } else {
+      room.broadcastChatMsg({ ...msg, username: user.username });
+    }
   });
   socket.on('disconnect', (): void => {
     const activeUser = room.getActiveUser();

@@ -1,8 +1,6 @@
 import React from 'react';
-export type RoundTime = {
-  timeToComplete: number;
-  startTime: number;
-};
+import { RoundTime } from './RoundInfo';
+
 interface TimerProps {
   roundTime: RoundTime;
 }
@@ -21,6 +19,6 @@ const Timer: React.FC<TimerProps> = ({ roundTime }) => {
       isSubscribed = false;
     };
   }, [time]);
-  return <div id="timer">{Math.round(time / 1000)} seconds to go</div>;
+  return <div>&#9200; {Math.round(time / 1000)}</div>;
 };
 export default Timer;
