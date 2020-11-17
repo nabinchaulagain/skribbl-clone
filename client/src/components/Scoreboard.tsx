@@ -11,7 +11,7 @@ const Scoreboard: React.FC<ScoreboardProps> = ({ users }) => {
       {users.map((user: User) => {
         return (
           <div key={user.id}>
-            <b>{user.username}:</b> {user.points} points
+            <b>{user.username}:</b> {user.score} points
           </div>
         );
       })}

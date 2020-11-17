@@ -17,7 +17,7 @@ interface GameProps {
 
 export type User = {
   id: string;
-  points: number;
+  score: number;
   username: string;
 };
 
@@ -66,9 +66,18 @@ const Game: React.FC<GameProps> = ({ canvasWidth, canvasHeight, exitGame }) => {
     socket.on('userLeave', (user: User) => {
       setUsers(users.filter((usr) => usr.id !== user.id));
     });
+    socket.on('roundScores', (roundScores: Record<string, number>) => {
+      const newUsers: User[] = [];
+      for (const user of users) {
+        const newUser = { ...user, score: user.score + roundScores[user.id] };
+        newUsers.push(newUser);
+      }
+      setUsers(newUsers);
+    });
     return () => {
       socket.removeEventListener('userJoin');
       socket.removeEventListener('userLeave');
+      socket.removeEventListener('roundScores');
     };
   }, [users]);
   return (

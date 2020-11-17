@@ -36,13 +36,6 @@ export default class Room {
       type: 'good',
       msg: `${user.username} has joined the game`,
     });
-    if (this.round) {
-      this.round.userGuesses.push({
-        guessedCorrectly: false,
-        points: 0,
-        userId: user.id,
-      });
-    }
   }
   removeUser(user: User): void {
     this.users = this.users.filter((usr) => usr.id !== user.id);
@@ -88,7 +81,7 @@ export default class Room {
     };
   }
   startRound(): void {
-    this.round = new Round(this.users);
+    this.round = new Round();
     const roundInfo = this.getRoundInfo();
     this.broadcast('roundStart', {
       ...roundInfo,
@@ -106,8 +99,19 @@ export default class Room {
   }
 
   endRound(): void {
+    if (!this.round) {
+      throw new Error();
+    }
     this.broadcast('roundEnd', 1);
     (this.round as Round).isActive = false;
+    const roundScores = this.round?.getScores(
+      this.getActiveUser().id,
+      this.users
+    );
+    this.broadcast('roundScores', roundScores);
+    for (const user of this.users) {
+      user.score += roundScores[user.id];
+    }
   }
   startNextRound(): void {
     this.activeUserIdx++;

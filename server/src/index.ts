@@ -78,7 +78,14 @@ io.on('connection', (socket: SocketIO.Socket): void => {
             type: 'good',
             msg: `${user.username} guessed the word correctly`,
           });
-          round.assignUserPoints(user.id);
+          round.assignUserScore(user.id);
+          if (
+            round.didEveryoneGuessCorrectly(room.getActiveUser().id, room.users)
+          ) {
+            clearTimeout(room.endRoundTimeOut as NodeJS.Timeout);
+            room.endRound();
+            room.startNextRound();
+          }
         } else {
           room.broadcastChatMsg({ ...msg, username: user.username });
         }
