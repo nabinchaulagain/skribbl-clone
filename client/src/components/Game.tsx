@@ -7,6 +7,7 @@ import Socket from '../utils/Socket';
 import RoundInfo, { RoundTime } from './RoundInfo';
 import Chatbox from './Chatbox';
 import Scoreboard from './Scoreboard';
+import CanvasOverlay from './RoundScoreOverlay';
 
 interface GameProps {
   canvasWidth: number;
@@ -21,15 +22,24 @@ export type User = {
   username: string;
 };
 
+export type RoundScore = {
+  userId: string;
+  username: string;
+  score: number;
+};
+
 const Game: React.FC<GameProps> = ({ canvasWidth, canvasHeight, exitGame }) => {
   const [users, setUsers] = React.useState<User[]>([]);
   const [drawingPermission, setDrawingPermission] = React.useState(false);
   const [isGameStarted, setIsGameStarted] = React.useState(false);
+  const [isWaitingForNextRd, setIsWaitingForNextRd] = React.useState(false);
   const [roundTime, setRoundTime] = React.useState<null | RoundTime>(null);
   const [word, setWord] = React.useState<null | string>(null);
+  const [roundScores, setRoundScores] = React.useState<RoundScore[]>([]);
   const socket = Socket.getSocket();
   const endRound = (): void => {
     setDrawingPermission(false);
+    setIsWaitingForNextRd(true);
     setRoundTime(null);
   };
   const endGame = (): void => {
@@ -47,6 +57,7 @@ const Game: React.FC<GameProps> = ({ canvasWidth, canvasHeight, exitGame }) => {
       } else {
         setDrawingPermission(false);
       }
+      setIsWaitingForNextRd(false);
       setRoundTime({
         timeToComplete: msg.timeToComplete,
         startTime: msg.startTime,
@@ -66,12 +77,19 @@ const Game: React.FC<GameProps> = ({ canvasWidth, canvasHeight, exitGame }) => {
     socket.on('userLeave', (user: User) => {
       setUsers(users.filter((usr) => usr.id !== user.id));
     });
-    socket.on('roundScores', (roundScores: Record<string, number>) => {
+    socket.on('roundScores', (rdScores: Record<string, number>) => {
       const newUsers: User[] = [];
+      const rdScoresCurr: RoundScore[] = [];
       for (const user of users) {
-        const newUser = { ...user, score: user.score + roundScores[user.id] };
+        rdScoresCurr.push({
+          userId: user.id,
+          score: rdScores[user.id],
+          username: user.username,
+        });
+        const newUser = { ...user, score: user.score + rdScores[user.id] };
         newUsers.push(newUser);
       }
+      setRoundScores(rdScoresCurr);
       setUsers(newUsers);
     });
     return () => {
@@ -82,8 +100,17 @@ const Game: React.FC<GameProps> = ({ canvasWidth, canvasHeight, exitGame }) => {
   }, [users]);
   return (
     <>
-      <RoundInfo roundTime={roundTime} word={word}></RoundInfo>
+      <RoundInfo
+        roundTime={roundTime}
+        word={word}
+        isWaitingForNextRd={isWaitingForNextRd}
+      ></RoundInfo>
       <div id="game-container">
+        <CanvasOverlay
+          isWaitingForNextRd={isWaitingForNextRd}
+          roundScores={roundScores}
+          word={word}
+        ></CanvasOverlay>
         <DrawingBoardProvider
           drawingPermission={drawingPermission}
           isGameStarted={isGameStarted}

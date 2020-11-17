@@ -9,10 +9,22 @@ export type RoundTime = {
 interface RoundInfoProps {
   roundTime: RoundTime | null;
   word: string | null;
+  isWaitingForNextRd: boolean;
 }
 
-const RoundInfo: React.FC<RoundInfoProps> = ({ roundTime, word }) => {
+const RoundInfo: React.FC<RoundInfoProps> = ({
+  roundTime,
+  word,
+  isWaitingForNextRd,
+}) => {
   let renderedContent: JSX.Element;
+  if (isWaitingForNextRd) {
+    return (
+      <div id="roundinfo-container">
+        <div id="round-waiting">Waiting for next round to start</div>
+      </div>
+    );
+  }
   if (roundTime && word) {
     renderedContent = (
       <>
