@@ -32,6 +32,8 @@ export interface GameContextProps {
   setWord: (word: null | string) => void;
   roundScores: RoundScore[];
   setRoundScores: (roundScores: RoundScore[]) => void;
+  activeUserId: string | null;
+  setActiveUserId: (activeUserId: string | null) => void;
 }
 export const GameContext = React.createContext<Partial<GameContextProps>>({});
 
@@ -48,11 +50,13 @@ const GameProvider: React.FC<GameProviderProps> = (props) => {
   const [roundTime, setRoundTime] = React.useState<null | RoundTime>(null);
   const [word, setWord] = React.useState<null | string>(null);
   const [roundScores, setRoundScores] = React.useState<RoundScore[]>([]);
+  const [activeUserId, setActiveUserId] = React.useState<null | string>(null);
   const socket = Socket.getSocket();
   const endRound = (): void => {
     setDrawingPermission(false);
     setIsWaitingForNextRd(true);
     setRoundTime(null);
+    setActiveUserId(null);
   };
   const endGame = (): void => {
     endRound();
@@ -64,6 +68,7 @@ const GameProvider: React.FC<GameProviderProps> = (props) => {
       setIsGameStarted(true);
     });
     socket.on('roundStart', (msg: any): void => {
+      setActiveUserId(msg.socketId);
       if (msg.socketId === socket.id) {
         setDrawingPermission(true);
       } else {
@@ -127,6 +132,8 @@ const GameProvider: React.FC<GameProviderProps> = (props) => {
         setWord,
         roundScores,
         setRoundScores,
+        activeUserId,
+        setActiveUserId,
       }}
     >
       {props.children}

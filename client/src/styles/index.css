@@ -168,11 +168,11 @@ canvas {
   background: #ffffff;
 }
 #overlay {
-  border: 5px solid #a1a1a1;
+  border: 5px solid #050505;
   margin: 0;
   width: 800px;
   vertical-align: center;
-  background: #a1a1a1;
+  background: #050505;
   grid-column: 2;
   grid-row: 1;
   z-index: 23;
@@ -183,4 +183,13 @@ canvas {
   opacity: 0.8;
   font-size: 48px;
   line-height: 64px;
+}
+#overlay h3 {
+  margin: 30px 0;
+  color: #cccdcf;
+}
+#pencil {
+  margin: 0;
+  font-size: 150%;
+  vertical-align: middle;
 }
