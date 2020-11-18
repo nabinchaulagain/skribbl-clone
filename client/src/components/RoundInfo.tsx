@@ -21,7 +21,7 @@ const RoundInfo: React.FC<RoundInfoProps> = ({
   if (isWaitingForNextRd) {
     return (
       <div id="roundinfo-container">
-        <div id="round-waiting">Waiting for next round to start</div>
+        <div id="round-waiting">Waiting...</div>
       </div>
     );
   }

@@ -99,12 +99,15 @@ export default class Room {
   }
 
   endRound(): void {
+    if (!this.getActiveUser()) {
+      return;
+    }
     if (!this.round) {
       throw new Error();
     }
     this.broadcast('roundEnd', 1);
-    (this.round as Round).isActive = false;
-    const roundScores = this.round?.getScores(
+    this.round.isActive = false;
+    const roundScores = this.round.getScores(
       this.getActiveUser().id,
       this.users
     );

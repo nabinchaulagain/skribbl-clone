@@ -84,7 +84,10 @@ io.on('connection', (socket: SocketIO.Socket): void => {
           ) {
             clearTimeout(room.endRoundTimeOut as NodeJS.Timeout);
             room.endRound();
-            room.startNextRound();
+            room.endRoundTimeOut = setTimeout(
+              () => room.startNextRound(),
+              config.ROUND_DELAY
+            );
           }
         } else {
           room.broadcastChatMsg({ ...msg, username: user.username });
@@ -106,7 +109,10 @@ io.on('connection', (socket: SocketIO.Socket): void => {
       room.activeUserIdx--;
       clearTimeout(room.endRoundTimeOut as NodeJS.Timeout);
       room.endRound();
-      room.startNextRound();
+      room.endRoundTimeOut = setTimeout(
+        () => room.startNextRound(),
+        config.ROUND_DELAY
+      );
     }
   });
 });
