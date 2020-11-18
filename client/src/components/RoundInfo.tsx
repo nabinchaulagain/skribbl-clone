@@ -1,22 +1,16 @@
 import React from 'react';
 import Timer from './Timer';
+import { GameContext, GameContextProps } from '../providers/GameProvider';
 
 export type RoundTime = {
   timeToComplete: number;
   startTime: number;
 };
 
-interface RoundInfoProps {
-  roundTime: RoundTime | null;
-  word: string | null;
-  isWaitingForNextRd: boolean;
-}
-
-const RoundInfo: React.FC<RoundInfoProps> = ({
-  roundTime,
-  word,
-  isWaitingForNextRd,
-}) => {
+const RoundInfo: React.FC = () => {
+  const { isWaitingForNextRd, roundTime, word } = React.useContext(
+    GameContext
+  ) as GameContextProps;
   let renderedContent: JSX.Element;
   if (isWaitingForNextRd) {
     return (
@@ -33,7 +27,7 @@ const RoundInfo: React.FC<RoundInfoProps> = ({
       </>
     );
   } else {
-    renderedContent = <div id="round-waiting">Waiting for others to join</div>;
+    renderedContent = <div id="round-waiting">Waiting...</div>;
   }
   return <div id="roundinfo-container">{renderedContent}</div>;
 };

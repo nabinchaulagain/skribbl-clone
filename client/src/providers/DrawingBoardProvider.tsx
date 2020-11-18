@@ -1,12 +1,8 @@
 import React, { useState } from 'react';
 import Socket from '../utils/Socket';
 import { waitFor } from '../utils';
+import { GameContextProps, GameContext } from './GameProvider';
 
-interface DrawingBoardProviderProps {
-  children: React.ReactNode;
-  drawingPermission: boolean;
-  isGameStarted: boolean;
-}
 type BoardEvent = React.MouseEvent<HTMLCanvasElement, MouseEvent>;
 type PickerEvent = React.ChangeEvent<HTMLInputElement>;
 
@@ -35,9 +31,8 @@ export const DrawingBoardContext = React.createContext<
   Partial<DrawingBoardContextProps>
 >({});
 
-const DrawingBoardProvider = (
-  props: DrawingBoardProviderProps
-): JSX.Element => {
+const DrawingBoardProvider: React.FC = (props) => {
+  const context = React.useContext(GameContext) as GameContextProps;
   const [isDrawing, setIsDrawing] = React.useState(false);
   const [ctx, setCtx] = React.useState<CanvasRenderingContext2D>();
   const [color, setColor] = useState('#ff0000');
@@ -74,7 +69,7 @@ const DrawingBoardProvider = (
   };
 
   const draw = (ev: BoardEvent, isEnding = false) => {
-    if (!ctx || !isDrawing || !props.drawingPermission) {
+    if (!ctx || !isDrawing || !context.drawingPermission) {
       return;
     }
     const newLine = {

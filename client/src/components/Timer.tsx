@@ -12,7 +12,12 @@ const Timer: React.FC<TimerProps> = ({ roundTime }) => {
     let isSubscribed = true;
     setTimeout(() => {
       if (isSubscribed) {
-        setTime(roundTime.timeToComplete + roundTime.startTime - Date.now());
+        const newTime =
+          roundTime.timeToComplete + roundTime.startTime - Date.now();
+        if (Math.round(newTime / 1000) <= 0) {
+          return;
+        }
+        setTime(newTime);
       }
     }, 250);
     return () => {

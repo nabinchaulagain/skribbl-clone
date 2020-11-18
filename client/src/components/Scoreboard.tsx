@@ -1,14 +1,12 @@
 import React from 'react';
-import { User } from './Game';
+import { GameContext, GameContextProps } from '../providers/GameProvider';
 
-interface ScoreboardProps {
-  users: User[];
-}
-const Scoreboard: React.FC<ScoreboardProps> = ({ users }) => {
+const Scoreboard: React.FC = () => {
+  const { users } = React.useContext(GameContext) as GameContextProps;
   return (
     <div id="scoreboard">
       <h2>Scoreboard</h2>
-      {users.map((user: User) => {
+      {users.map((user) => {
         return (
           <div key={user.id}>
             <b>{user.username}:</b> {user.score} points

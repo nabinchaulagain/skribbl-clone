@@ -1,6 +1,7 @@
 import React from 'react';
 import Socket from '../utils/Socket';
 import { cleanup, fireEvent, render, screen } from '@testing-library/react';
+import { GameContext } from '../providers/GameProvider';
 import DrawingBoardProvider, { Line } from '../providers/DrawingBoardProvider';
 import DrawingBoard from './DrawingBoard';
 import { CanvasContextMock } from '../mocks/canvasCtx';
@@ -19,12 +20,14 @@ describe('drawing board', (): void => {
   describe('user', () => {
     beforeEach(() => {
       render(
-        <DrawingBoardProvider drawingPermission={true} isGameStarted={true}>
-          <DrawingBoard
-            width={window.outerWidth}
-            height={window.outerHeight}
-          ></DrawingBoard>
-        </DrawingBoardProvider>
+        <GameContext.Provider value={{ drawingPermission: true }}>
+          <DrawingBoardProvider>
+            <DrawingBoard
+              width={window.outerWidth}
+              height={window.outerHeight}
+            ></DrawingBoard>
+          </DrawingBoardProvider>
+        </GameContext.Provider>
       );
     });
     it('can draw dot', (): void => {
@@ -55,12 +58,14 @@ describe('drawing board', (): void => {
   describe('socket', (): void => {
     beforeEach(() => {
       render(
-        <DrawingBoardProvider drawingPermission={true} isGameStarted={true}>
-          <DrawingBoard
-            width={window.outerWidth}
-            height={window.outerHeight}
-          ></DrawingBoard>
-        </DrawingBoardProvider>
+        <GameContext.Provider value={{ drawingPermission: true }}>
+          <DrawingBoardProvider>
+            <DrawingBoard
+              width={window.outerWidth}
+              height={window.outerHeight}
+            ></DrawingBoard>
+          </DrawingBoardProvider>
+        </GameContext.Provider>
       );
     });
     it('draws when socket recieves a message', (): void => {

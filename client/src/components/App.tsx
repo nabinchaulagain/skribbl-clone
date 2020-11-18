@@ -1,4 +1,5 @@
 import React from 'react';
+import GameProvider from '../providers/GameProvider';
 import Game from './Game';
 import Home from './Home';
 
@@ -8,12 +9,9 @@ const App: React.FC = () => {
     return <Home setUsername={setUsername}></Home>;
   }
   return (
-    <Game
-      canvasHeight={700}
-      canvasWidth={800}
-      username={username}
-      exitGame={() => setUsername(null)}
-    ></Game>
+    <GameProvider exitGame={() => setUsername(null)} username={username}>
+      <Game canvasHeight={700} canvasWidth={800}></Game>
+    </GameProvider>
   );
 };
 

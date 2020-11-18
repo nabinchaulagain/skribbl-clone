@@ -1,6 +1,7 @@
 import React from 'react';
 import { screen, render, cleanup, fireEvent } from '@testing-library/react';
 import DrawingBoard from './DrawingBoard';
+import { GameContext } from '../providers/GameProvider';
 import DrawingBoardProvider from '../providers/DrawingBoardProvider';
 import { CanvasContextMock } from '../mocks/canvasCtx';
 import StylePicker from './StylePicker';
@@ -16,13 +17,15 @@ Socket.getSocket = () => {
 describe('style picker', () => {
   beforeEach(() => {
     render(
-      <DrawingBoardProvider drawingPermission={true} isGameStarted={true}>
-        <DrawingBoard
-          width={window.outerWidth}
-          height={window.outerHeight}
-        ></DrawingBoard>
-        <StylePicker></StylePicker>
-      </DrawingBoardProvider>
+      <GameContext.Provider value={{ drawingPermission: true }}>
+        <DrawingBoardProvider>
+          <DrawingBoard
+            width={window.outerWidth}
+            height={window.outerHeight}
+          ></DrawingBoard>
+          <StylePicker></StylePicker>
+        </DrawingBoardProvider>
+      </GameContext.Provider>
     );
   });
   it('changes brush color', () => {

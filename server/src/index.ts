@@ -26,7 +26,7 @@ io.on('connection', (socket: SocketIO.Socket): void => {
   const user = new User(socket.id, socket, socket.handshake.query.username);
   room.addUser(user);
   socket.emit('usersState', room.getUsersState());
-  if (room.gameStarted) {
+  if (room.gameStarted && room.round && room.round.isActive) {
     const roundInfo = room.getRoundInfo();
     socket.emit('gameStart');
     socket.emit('roundStart', {
@@ -47,7 +47,7 @@ io.on('connection', (socket: SocketIO.Socket): void => {
   });
   socket.on('chatMsg', (msg): void => {
     const round = room.round;
-    if (round && round.isActive) {
+    if (round && round.isActive && room.getActiveUser()) {
       if (user.id === room.getActiveUser().id) {
         room.broadcastChatMsgToCorrectGuessers({
           msg: msg.msg,
