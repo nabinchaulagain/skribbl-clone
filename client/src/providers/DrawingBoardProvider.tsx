@@ -35,7 +35,7 @@ const DrawingBoardProvider: React.FC = (props) => {
   const context = React.useContext(GameContext) as GameContextProps;
   const [isDrawing, setIsDrawing] = React.useState(false);
   const [ctx, setCtx] = React.useState<CanvasRenderingContext2D>();
-  const [color, setColor] = useState('#ff0000');
+  const [color, setColor] = useState('#000000');
   const [brushSize, setBrushSize] = useState(10);
   const socket = Socket.getSocket();
   React.useEffect(() => {

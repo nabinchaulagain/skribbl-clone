@@ -64,8 +64,9 @@ class Round {
         userScoresFinal[user.id] = 0;
       }
     }
-    userScoresFinal[activeUserId] =
-      (correctGuesses / (users.length - 1)) * config.MAX_ROUND_POINTS;
+    userScoresFinal[activeUserId] = Math.round(
+      (correctGuesses / (users.length - 1)) * config.MAX_ROUND_POINTS
+    );
     return userScoresFinal;
   }
   getVoteKicks(users: User[]): number {

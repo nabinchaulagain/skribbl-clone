@@ -31,7 +31,7 @@ body {
   color: white;
 }
 .btn-style-2 {
-  background: #ffe169;
+  background:#ffcb3d;
   padding: 10px 20px;
   font-size: 120%;
 }
@@ -152,7 +152,7 @@ canvas {
   color: #6098f7;
 }
 .msg-warn {
-  color: #ffe169;
+  color:#ffcb3d;
 }
 
 #scoreboard {
