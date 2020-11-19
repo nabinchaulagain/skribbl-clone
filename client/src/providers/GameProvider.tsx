@@ -19,21 +19,13 @@ export type RoundTime = {
 
 export interface GameContextProps {
   users: User[];
-  setUsers: (users: User[]) => void;
   drawingPermission: boolean;
-  setDrawingPermission: (drawingPermission: boolean) => void;
   isGameStarted: boolean;
-  setIsGameStarted: (isGameStarted: boolean) => void;
   isWaitingForNextRd: boolean;
-  setIsWaitingForNextRd: (isWaitingForNextRd: boolean) => void;
   roundTime: null | RoundTime;
-  setRoundTime: (roundTime: null | RoundTime) => void;
   word: null | string;
-  setWord: (word: null | string) => void;
   roundScores: RoundScore[];
-  setRoundScores: (roundScores: RoundScore[]) => void;
   activeUserId: string | null;
-  setActiveUserId: (activeUserId: string | null) => void;
   wordReal: string | null;
 }
 export const GameContext = React.createContext<Partial<GameContextProps>>({});
@@ -128,21 +120,13 @@ const GameProvider: React.FC<GameProviderProps> = (props) => {
     <GameContext.Provider
       value={{
         users,
-        setUsers,
         drawingPermission,
-        setDrawingPermission,
         isGameStarted,
-        setIsGameStarted,
         isWaitingForNextRd,
-        setIsWaitingForNextRd,
         roundTime,
-        setRoundTime,
         word,
-        setWord,
         roundScores,
-        setRoundScores,
         activeUserId,
-        setActiveUserId,
         wordReal,
       }}
     >
