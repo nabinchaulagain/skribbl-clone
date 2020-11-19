@@ -8,7 +8,7 @@ const RoundScoreOverlay: React.FC = () => {
   }
   return (
     <div id="overlay">
-      <h3>Scores</h3>
+      <h3>The word was &apos;{context.wordReal}&apos;</h3>
       {context.roundScores.map((roundScore) => (
         <div
           className="round-score"

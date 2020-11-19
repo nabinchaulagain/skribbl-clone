@@ -108,6 +108,7 @@ export default class Room {
     if (!this.round) {
       return;
     }
+    this.broadcast('wordReveal', this.round.word);
     this.broadcast('roundEnd', 1);
     this.round.isActive = false;
     const roundScores = this.round.getScores(activeUser.id, this.users);

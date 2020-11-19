@@ -39,6 +39,18 @@ io.on('connection', (socket: SocketIO.Socket): void => {
     room.startGame();
     room.startRound();
   }
+  if (room.users.length < config.MIN_PLAYERS_PER_ROOM) {
+    setTimeout(
+      () =>
+        room.broadcastChatMsg({
+          type: 'alert',
+          msg: `need ${
+            config.MIN_PLAYERS_PER_ROOM - room.users.length
+          } more player(s) to start the game`,
+        }),
+      50
+    );
+  }
   socket.on('lineDraw', (msg): void => {
     if (room.getActiveUser().id === user.id) {
       room.addToDrawingState(msg);
