@@ -167,8 +167,15 @@ canvas {
   font-size: 120%;
 }
 #scoreboard > div {
+  display: grid;
+  grid-template-columns: 30% 70%;
   padding: 10px;
-  text-align: center;
+}
+#scoreboard > div > .rank {
+  font-size: 120%;
+}
+#scoreboard > div > .points {
+  text-align: left;
 }
 #scoreboard > h2 {
   text-align: center;

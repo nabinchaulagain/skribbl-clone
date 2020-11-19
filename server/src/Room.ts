@@ -106,7 +106,7 @@ export default class Room {
       return;
     }
     if (!this.round) {
-      throw new Error();
+      return;
     }
     this.broadcast('roundEnd', 1);
     this.round.isActive = false;
