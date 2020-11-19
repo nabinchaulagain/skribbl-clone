@@ -98,8 +98,11 @@ export default class Room {
     }, this.round.timeToComplete);
   }
 
-  endRound(): void {
-    if (!this.getActiveUser()) {
+  endRound(activeUser?: User): void {
+    if (!activeUser) {
+      activeUser = this.getActiveUser();
+    }
+    if (!activeUser) {
       return;
     }
     if (!this.round) {
@@ -107,10 +110,7 @@ export default class Room {
     }
     this.broadcast('roundEnd', 1);
     this.round.isActive = false;
-    const roundScores = this.round.getScores(
-      this.getActiveUser().id,
-      this.users
-    );
+    const roundScores = this.round.getScores(activeUser.id, this.users);
     this.broadcast('roundScores', roundScores);
     for (const user of this.users) {
       user.score += roundScores[user.id];
@@ -125,8 +125,8 @@ export default class Room {
       this.startRound();
     }
   }
-  broadcastChatMsg(msg: ChatMsg) {
-    this.broadcast('chatMsg', msg);
+  broadcastChatMsg(msg: ChatMsg, excludedUser?: User) {
+    this.broadcast('chatMsg', msg, excludedUser);
   }
   broadcastChatMsgToCorrectGuessers(msg: ChatMsg) {
     const correctGuessers = this.users.filter((user) =>

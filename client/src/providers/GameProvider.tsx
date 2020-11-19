@@ -86,6 +86,10 @@ const GameProvider: React.FC<GameProviderProps> = (props) => {
     socket.on('usersState', (users: User[]) => {
       setUsers(users);
     });
+    socket.on('kickOut', () => {
+      socket.disconnect();
+      props.exitGame();
+    });
   }, []);
   useEffect(() => {
     socket.on('userJoin', (user: User) => {

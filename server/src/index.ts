@@ -97,18 +97,39 @@ io.on('connection', (socket: SocketIO.Socket): void => {
       room.broadcastChatMsg({ ...msg, username: user.username });
     }
   });
+  socket.on('voteKick', () => {
+    if (room.getActiveUser() && room.round && room.round.isActive) {
+      room.round.kickVotes[user.id] = true;
+      const kickVotes = room.round.getVoteKicks(room.users);
+      const voteRequirement = Math.ceil(room.users.length / 2);
+      room.broadcastChatMsg(
+        {
+          msg: `'${user.username}' is voting to kick out ${
+            room.getActiveUser().username
+          }(${kickVotes}/${voteRequirement})`,
+          type: 'warn',
+        },
+        room.getActiveUser()
+      );
+      if (kickVotes >= voteRequirement) {
+        room.getActiveUser().socket.emit('kickOut', 1);
+      }
+    }
+  });
   socket.on('disconnect', (): void => {
     const activeUser = room.getActiveUser();
     room.removeUser(user);
     if (room.users.length < config.MIN_PLAYERS_PER_ROOM) {
-      room.endGame();
-      rooms = rooms.filter((rm) => room !== rm);
-      return;
+      if (room.gameStarted) {
+        room.endGame();
+        rooms = rooms.filter((rm) => room !== rm);
+        return;
+      }
     }
     if (activeUser && activeUser.id === user.id) {
       room.activeUserIdx--;
       clearTimeout(room.endRoundTimeOut as NodeJS.Timeout);
-      room.endRound();
+      room.endRound(activeUser);
       room.endRoundTimeOut = setTimeout(
         () => room.startNextRound(),
         config.ROUND_DELAY

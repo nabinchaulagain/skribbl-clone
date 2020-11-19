@@ -8,6 +8,8 @@ import Chatbox from './Chatbox';
 import Scoreboard from './Scoreboard';
 import CanvasOverlay from './RoundScoreOverlay';
 import { GameContext, GameContextProps } from '../providers/GameProvider';
+import KickButton from './KickButton';
+import Socket from '../utils/Socket';
 
 interface GameProps {
   canvasWidth: number;
@@ -27,9 +29,13 @@ export type RoundScore = {
 };
 
 const Game: React.FC<GameProps> = ({ canvasWidth, canvasHeight }) => {
-  const { drawingPermission } = React.useContext(
-    GameContext
-  ) as GameContextProps;
+  const {
+    drawingPermission,
+    isGameStarted,
+    isWaitingForNextRd,
+    activeUserId,
+  } = React.useContext(GameContext) as GameContextProps;
+  const socket = Socket.getSocket();
   return (
     <>
       <RoundInfo></RoundInfo>
@@ -44,6 +50,9 @@ const Game: React.FC<GameProps> = ({ canvasWidth, canvasHeight }) => {
           {drawingPermission && <StylePicker></StylePicker>}
         </DrawingBoardProvider>
         <Chatbox></Chatbox>
+        {isGameStarted && !isWaitingForNextRd && activeUserId !== socket.id && (
+          <KickButton></KickButton>
+        )}
       </div>
     </>
   );

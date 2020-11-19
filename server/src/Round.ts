@@ -12,6 +12,7 @@ class Round {
   word: string;
   isActive: boolean;
   userScores: Record<string, number>;
+  kickVotes: Record<string, boolean>;
 
   constructor() {
     this.word = this.pickRandomWord();
@@ -19,16 +20,11 @@ class Round {
     this.startTime = Date.now();
     this.isActive = true;
     this.userScores = {};
+    this.kickVotes = {};
   }
   pickRandomWord(): string {
     return words[Math.floor(Math.random() * words.length)];
   }
-  // private getUserGuess(userId: string): UserGuess {
-  //   const userGuess = this.userGuesses.find(
-  //     (guess) => guess.userId == userId
-  //   ) as UserGuess;
-  //   return userGuess;
-  // }
   didUserGuess(userId: string): boolean {
     return Boolean(this.userScores[userId]);
   }
@@ -71,6 +67,15 @@ class Round {
     userScoresFinal[activeUserId] =
       (correctGuesses / (users.length - 1)) * config.MAX_ROUND_POINTS;
     return userScoresFinal;
+  }
+  getVoteKicks(users: User[]): number {
+    let numVotes = 0;
+    for (const user of users) {
+      if (this.kickVotes[user.id]) {
+        numVotes++;
+      }
+    }
+    return numVotes;
   }
 }
 

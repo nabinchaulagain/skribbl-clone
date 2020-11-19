@@ -30,6 +30,11 @@ body {
   background: linear-gradient(#032991, #590391);
   color: white;
 }
+.btn-style-2 {
+  background: #ffe169;
+  padding: 10px 20px;
+  font-size: 120%;
+}
 #home-container input[type='submit'] {
   display: block;
   margin: auto;
@@ -75,6 +80,7 @@ canvas {
 }
 #round-word {
   letter-spacing: 5px;
+  font-weight: bold;
 }
 
 #chatbox-container {
@@ -132,7 +138,8 @@ canvas {
 }
 .msg-good,
 .msg-bad,
-.msg-alert {
+.msg-alert,
+.msg-warn {
   font-weight: bolder;
 }
 .msg-good {
@@ -143,6 +150,9 @@ canvas {
 }
 .msg-alert {
   color: #6098f7;
+}
+.msg-warn {
+  color: #ffe169;
 }
 
 #scoreboard {
@@ -192,4 +202,9 @@ canvas {
   margin: 0;
   font-size: 150%;
   vertical-align: middle;
+}
+#kick-container {
+  grid-row: 2;
+  grid-column: 2;
+  text-align: center;
 }
