@@ -8,6 +8,9 @@ const ChatForm: React.FC = () => {
       id="chatbox-form"
       onSubmit={(ev): void => {
         ev.preventDefault();
+        if (chatInput === '') {
+          return;
+        }
         socket.emit('chatMsg', { type: 'chat', msg: chatInput });
         setChatInput('');
       }}
